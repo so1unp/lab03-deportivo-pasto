@@ -66,8 +66,8 @@ Utilizar las siguientes llamadas al sistema:
 * [`getpriority()`](https://man7.org/linux/man-pages/man2/setpriority.2.html): retorna el valor de prioridad un proceso.
 * [`getrusage()`](https://man7.org/linux/man-pages/man2/getrusage.2.html): obtiene estadísticas de ejecución de un proceso.
 * [`sleep()`](https://man7.org/linux/man-pages/man3/sleep.3.html): suspende la ejecución de un proceso durante el número indicado de segundos.
-* [`kill()`](http://man7.org/linux/man-pages/man2/kill.2.html): envía una señal a un proceso.
-* [`sigaction()`](http://man7.org/linux/man-pages/man2/sigaction.2.html): permite modificar la acción a ejecutar al recibir una señal.
+* [`kill()`](http://man7.org/linux/man-pages/man2/kill.2.html): envía una señal a un proceso. (mandar una señal)
+* [`sigaction()`](http://man7.org/linux/man-pages/man2/sigaction.2.html): permite modificar la acción a ejecutar al recibir una señal. (establecer una señal)
 
 Para verificar que efectivamente se estan creando los procesos hijos, pueden realizar la siguiente prueba:
 ```console
