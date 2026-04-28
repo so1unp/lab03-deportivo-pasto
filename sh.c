@@ -62,27 +62,64 @@ void runcmd(struct cmd *cmd)
             fprintf(stderr, "unknown runcmd\n");
             exit(-1);
 
-        case EXEC:
+        case EXEC: {
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
                 exit(0);
-            fprintf(stderr, "exec not implemented\n");
-            // Your code here ...
+            execvp(ecmd->argv[0], ecmd->argv);
+            perror("exec");
             break;
+        }
 
-        case REDIR:
-            fprintf(stderr, "redir not implemented\n");
-            // Your code here ...
+        case REDIR: {
             rcmd = (struct redircmd *) cmd;
+            close(rcmd->fd);
+            if (open(rcmd->file, rcmd->mode, 0666) < 0) {
+                perror("open");
+                exit(-1);
+            }
             runcmd(rcmd->cmd);
             break;
+        }
 
-        case PIPE:
-            fprintf(stderr, "pipe not implemented\n");
-            // Your code here ...
+        case PIPE: {
             pcmd = (struct pipecmd *) cmd;
-            runcmd(pcmd->left);
+            int pipefd[2];
+            int p1, p2;
+
+            if (pipe(pipefd) < 0) {
+                perror("pipe");
+                exit(-1);
+            }
+
+            p1 = fork1();
+            if (p1 == 0) {
+                if (dup2(pipefd[1], 1) < 0) {
+                    perror("dup2");
+                    exit(-1);
+                }
+                close(pipefd[0]);
+                close(pipefd[1]);
+                runcmd(pcmd->left);
+            }
+
+            p2 = fork1();
+            if (p2 == 0) {
+                if (dup2(pipefd[0], 0) < 0) {
+                    perror("dup2");
+                    exit(-1);
+                }
+                close(pipefd[0]);
+                close(pipefd[1]);
+                runcmd(pcmd->right);
+            }
+
+            close(pipefd[0]);
+            close(pipefd[1]);
+            waitpid(p1, NULL, 0);
+            waitpid(p2, NULL, 0);
             break;
+        }
     }
     exit(0);
 }
