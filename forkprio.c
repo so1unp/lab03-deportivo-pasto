@@ -8,7 +8,10 @@
 
 volatile sig_atomic_t terminar = 0;
 
-void manejar_sigterm(int sig) { terminar = 1; }
+void manejar_sigterm(int sig) { 
+  (void)sig; //Esto es porque no se usa la variable sig.
+  terminar = 1; 
+}
 
 int busywork(void) {
   struct tms buf;
@@ -27,7 +30,7 @@ int main(int argc, char *argv[]) {
   }
 
   int n_hijos = atoi(argv[1]);
-  int segundos = atoi(argv[2]);
+  unsigned segundos = (unsigned)atoi(argv[2]);    //Esto es porque no podemos pasar segundos negativos pero atoi si puede tener numeros negativos.
   int cambiar_prio = atoi(argv[3]);
 
   pid_t pids[n_hijos];
